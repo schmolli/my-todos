@@ -89,8 +89,8 @@ public class ToDoServlet extends HttpServlet {
 	private String generateTable() {
 		StringBuffer table = new StringBuffer();
 		for (ToDo todo : todos) {
-			table.append("<tr><td>" + todo.getDescription() + "</td>");
-			table.append("<td>" + todo.getCreated() + "</td></tr>");
+			table.append("<tr><td>").append(todo.getDescription()).append("</td>");
+			table.append("<td>").append(todo.getCreated()).append("</td></tr>");
 		}
 		if (table.length() == 0)
 			table.append("<tr></tr>");
