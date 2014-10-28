@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+	<title>My-TODOs</title>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+</h:head>
+<h:body>
+	<div id="container">
+		<div id="header">
+			<p>My-TODOs - Little Helper</p>
+		</div>
+		<div id="content">
+			<h:form>
+				<h1>Enter TODO</h1>
+
+				<h:inputText id="todo" value="#{toDoController.todo.description}"
+					validatorMessage="Please, enter a TODO!">
+					<f:passThroughAttribute name="placeholder" value="Enter TODO" />
+					<f:validateRequired />
+				</h:inputText>
+
+				<h:commandButton value="Save"
+					actionListener="#{toDoController.doSave}" />
+				<h:message for="todo" style="color: red;" />
+
+				<h1>My TODOs</h1>
+
+				<h:dataTable value="#{toDoController.todos}" var="todo">
+					<h:column>
+						<h:outputText value="#{todo.description}" />
+					</h:column>
+					<h:column>
+						<h:outputText value="#{todo.created}" />
+					</h:column>
+				</h:dataTable>
+				<h:commandButton value="Reset" immediate="true"
+					actionListener="#{toDoController.doReset}" />
+			</h:form>
+		</div>
+		<div id="footer">
+			<p> (C) 2014 geekleap ltd., MIT license</p>
+		</div>
+	</div>
+</h:body>
+</html>
