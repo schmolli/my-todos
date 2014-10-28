@@ -2,9 +2,8 @@ package com.devbookz.todos;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,7 +26,7 @@ public class ToDoServlet extends HttpServlet {
 	 */
 	public ToDoServlet() {
 		super();
-		todos = new Vector<>();
+		todos = new LinkedList<>();
 		errorMessage="";
 	}
 
@@ -53,30 +52,38 @@ public class ToDoServlet extends HttpServlet {
 		switch (button) {
 
 		case "save":
-			// get post parameter
-			String todoDescr = request.getParameter("todo");
-			if (todoDescr != null && todoDescr.isEmpty()) {
-				// Save button
-				// create todo
-				ToDo todo = new ToDo();
-				todo.setDescription(todoDescr);
-				todo.setCreated(new Date());
-
-				// add todo list
-				todos.add(todo);
-				errorMessage="";
-			} else {
-				//Error message
-				errorMessage=NOINPUT;
-			}
+			actionAddToDo(request,response);
+			
 			break;
 		case "reset":
-			// Reset button
-			todos.clear();
-			errorMessage="";
+			actionReset(request,response);
 		}
-		// generate output
-		processRequest(request, response);
+		
+	}
+	
+	private synchronized void actionReset(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
+		todos.clear();
+		errorMessage="";
+		processRequest(request, response);				
+	}
+	
+	private synchronized void actionAddToDo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// get post parameter
+		String todoDescr = request.getParameter("todo");
+		if (todoDescr != null && !todoDescr.isEmpty()) {
+			// create todo
+			ToDo todo = new ToDo();
+			todo.setDescription(todoDescr);
+			todo.setCreated(new Date());
+
+			// add todo list
+			todos.add(todo);
+			errorMessage = "";
+		} else {
+			// Error message
+			errorMessage = "<span style=\"color:red\">"+NOINPUT+"</span>";
+		}		
+		processRequest(request, response);	
 	}
 
 	private void processRequest(HttpServletRequest request,
