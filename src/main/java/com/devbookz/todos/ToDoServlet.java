@@ -55,7 +55,7 @@ public class ToDoServlet extends HttpServlet {
 		case "save":
 			// get post parameter
 			String todoDescr = request.getParameter("todo");
-			if (todoDescr != null && todoDescr.length() > 0) {
+			if (todoDescr != null && todoDescr.isEmpty()) {
 				// Save button
 				// create todo
 				ToDo todo = new ToDo();
