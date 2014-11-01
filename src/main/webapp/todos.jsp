@@ -37,7 +37,7 @@
 
 <%
 	final String button = request.getParameter("button");
-	//if no button is pressed it is the initial GET to the page
+	//if no button is pressed it is probably the initial GET to the page
 	if (button!=null) {
 		switch (button) {
 		case "reset":
