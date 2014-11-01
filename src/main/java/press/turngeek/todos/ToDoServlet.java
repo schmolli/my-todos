@@ -1,4 +1,4 @@
-package com.devbookz.todos;
+package press.turngeek.todos;
 
 import java.io.IOException;
 import java.util.Date;
@@ -112,7 +112,7 @@ public class ToDoServlet extends HttpServlet {
 				+ "</table>"
 				+ "<button type=\"submit\" name=\"button\" value=\"reset\">Reset</button>"
 				+ "</form>" + "</div>" + "<div id=\"footer\">"
-				+ "<p>(C) 2014 geakleap ltd., MIT Licence</p>" + "</div>"
+				+ "<p>(C) 2014 turngeek ltd., MIT Licence</p>" + "</div>"
 				+ "</body>" + "</html>";
 
 		return site;
