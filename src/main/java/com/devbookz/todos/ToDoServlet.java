@@ -11,65 +11,49 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class ToDoServlet
- */
 @WebServlet({ "/ToDoServlet", "/todos" })
 public class ToDoServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final String NOINPUT="Please, enter TODO!";
-	private String errorMessage;
+
+	private static final long serialVersionUID = -7843898075264520941L;
+	private static final String NOINPUT = "Please, enter TODO!";
 	private List<ToDo> todos;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
 	public ToDoServlet() {
-		super();
 		todos = new LinkedList<>();
-		errorMessage="";
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// generate output
-		processRequest(request, response);
+		sendResponse(response, generateOutput(""));
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
-		String button = request.getParameter("button");
-
-		switch (button) {
-
-		case "save":
-			actionAddToDo(request,response);
-			
-			break;
-		case "reset":
-			actionReset(request,response);
-		}
-		
-	}
-	
-	private synchronized void actionReset(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
-		todos.clear();
-		errorMessage="";
-		processRequest(request, response);				
-	}
-	
-	private synchronized void actionAddToDo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		final String output;
 		// get post parameter
-		String todoDescr = request.getParameter("todo");
+		final String button = request.getParameter("button");
+		switch (button) {
+		case "reset":
+			output = actionReset();
+			break;
+		case "save":
+		default:
+			String todoDescr = request.getParameter("todo");
+			output = actionAddToDo(todoDescr);
+			break;
+
+		}
+		sendResponse(response, output);
+	}
+
+	private synchronized String actionReset() {
+		todos.clear();
+		return generateOutput("");
+	}
+
+	private synchronized String actionAddToDo(String todoDescr) {
+
 		if (todoDescr != null && !todoDescr.isEmpty()) {
 			// create todo
 			ToDo todo = new ToDo();
@@ -78,25 +62,24 @@ public class ToDoServlet extends HttpServlet {
 
 			// add todo list
 			todos.add(todo);
-			errorMessage = "";
+			return generateOutput("");
 		} else {
-			// Error message
-			errorMessage = "<span style=\"color:red\">"+NOINPUT+"</span>";
-		}		
-		processRequest(request, response);	
+			return generateOutput(NOINPUT);
+		}
 	}
 
-	private void processRequest(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	private void sendResponse(HttpServletResponse response, final String output)
+			throws IOException {
 		response.setContentType("text/html");
 		response.setCharacterEncoding("utf-8");
-		response.getOutputStream().print(generateOutput());
+		response.getOutputStream().print(output);
 	}
 
 	private String generateTable() {
-		StringBuffer table = new StringBuffer();
+		StringBuilder table = new StringBuilder();
 		for (ToDo todo : todos) {
-			table.append("<tr><td>").append(todo.getDescription()).append("</td>");
+			table.append("<tr><td>").append(todo.getDescription())
+					.append("</td>");
 			table.append("<td>").append(todo.getCreated()).append("</td></tr>");
 		}
 		if (table.length() == 0)
@@ -104,10 +87,8 @@ public class ToDoServlet extends HttpServlet {
 		return table.toString();
 	}
 
-	private String generateOutput() {
-		StringBuffer site = new StringBuffer();
-
-		site.append("<!DOCTYPE html>"
+	private String generateOutput(String errorMessage) {
+		String site = "<!DOCTYPE html>"
 				+ "<html>"
 				+ "<head>"
 				+ "<meta charset=\"UTF-8\">"
@@ -123,8 +104,8 @@ public class ToDoServlet extends HttpServlet {
 				+ "<h1>Enter TODO</h1>"
 				+ "<form  method=\"POST\" action=\"\">"
 				+ "<input type=\"text\" name=\"todo\" class=\"form-control\" size=\"50\" placeholder=\"Enter todo\" />"
-				+ "<button type=\"submit\" name=\"button\" value=\"save\">Save</button>" 
-				+ errorMessage 
+				+ "<button type=\"submit\" name=\"button\" value=\"save\">Save</button>"
+				+ "<span style=\"color:red\">" + errorMessage +"</span>"
 				+ "<h1>My TODOs</h1>"
 				+ "<table>"
 				+ generateTable()
@@ -132,9 +113,9 @@ public class ToDoServlet extends HttpServlet {
 				+ "<button type=\"submit\" name=\"button\" value=\"reset\">Reset</button>"
 				+ "</form>" + "</div>" + "<div id=\"footer\">"
 				+ "<p>(C) 2014 geakleap ltd., MIT Licence</p>" + "</div>"
-				+ "</body>" + "</html>");
+				+ "</body>" + "</html>";
 
-		return site.toString();
+		return site;
 
 	}
 
