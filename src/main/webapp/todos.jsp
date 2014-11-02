@@ -1,63 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ page import="press.turngeek.todos.ToDo" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.LinkedList" %>
-<%@ page import="java.util.Date" %>
-<%! 
-	private static final String NOINPUT = "Please, enter TODO!";
-	private List<ToDo> todos=new LinkedList<>();
-	private synchronized void actionReset() {
-		todos.clear();		
-	}
-	private synchronized String actionAddToDo(String todoDescr) {
-	if (todoDescr != null && !todoDescr.isEmpty()) {
-			// create todo
-			ToDo todo = new ToDo();
-			todo.setDescription(todoDescr);
-			todo.setCreated(new Date());
-			// add todo list
-			todos.add(todo);
-			return "";
-		} else {
-			//set error
-			return NOINPUT;
-		}
-	}
-	private String generateTable() {
-		StringBuilder table = new StringBuilder();
-		for (ToDo todo : todos) {
-			table.append("<tr><td>").append(todo.getDescription()).append("</td>");
-			table.append("<td>").append(todo.getCreated()).append("</td></tr>");
-		}
-		if (table.length() == 0)
-			table.append("<tr></tr>");
-		return table.toString();
-	}
-%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%
-	final String button = request.getParameter("button");
-	//if no button is pressed it is probably the initial GET to the page
-	if (button!=null) {
-		switch (button) {
-		case "reset":
-			actionReset();
-			request.setAttribute("errorMessage", "");
-			request.setAttribute("table","");
-			break;
-		case "save":
-		default:
-			String todoDescr = request.getParameter("todo");
-			String errorMessage=actionAddToDo(todoDescr);
-			request.setAttribute("errorMessage", errorMessage);
-			request.setAttribute("table",generateTable());
-			break;
-		} 	
-	} else {
-		request.setAttribute("errorMessage", "");
-		request.setAttribute("table",generateTable());
-	}
-%>
+<jsp:useBean id="todos" class="press.turngeek.todos.MyToDosBean" scope="session"/>
+<c:if test="${!empty param.todo}">
+	<jsp:setProperty property="todo" name="todos" value="${param.todo}"/>
+</c:if>
+<c:if test="${param.button=='reset'}">
+		${todos.reset()}
+</c:if>
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,13 +24,22 @@
 		</div>
 		<div id="content">
 			<h1>Enter TODO</h1>
-			<form method="POST" action="todos.jsp">
+			<form method="POST" >
 				<input type="text" name="todo" size="30" placeholder="Enter TODO" />
 				<button type="submit" name="button" value="save">Save</button>
-				<span style="color:red"><%=request.getAttribute("errorMessage") %></span>
+				<c:if test="${empty param.todo && param.button=='save'}">
+					<span style="color:red">					
+						Please, enter TODO!
+					</span>
+				</c:if>
 				<h1>My TODOs</h1>
 				<table>
-					<%=request.getAttribute("table")%> 
+					<c:forEach items="${todos.todos}" var="todo">
+						<tr>
+							<td><c:out value="${todo.description}"/></td>
+							<td><c:out value="${todo.created}"/></td>
+						</tr>
+					</c:forEach>
 				</table>
 				<button type="submit" name="button" value="reset">Reset</button>
 			</form>
