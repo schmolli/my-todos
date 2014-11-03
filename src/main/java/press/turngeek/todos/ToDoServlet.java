@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 public class ToDoServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -7843898075264520941L;
-	private static final String NOINPUT = "Please, enter TODO!";
 	private List<ToDo> todos;
 
 	public ToDoServlet() {
@@ -25,7 +24,7 @@ public class ToDoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// generate output
-		sendResponse(response, generateOutput(""));
+		sendResponse(response, generateOutput());
 	}
 
 	protected void doPost(HttpServletRequest request,
@@ -38,18 +37,18 @@ public class ToDoServlet extends HttpServlet {
 			output = actionReset();
 			break;
 		case "save":
-		default:
 			String todoDescr = request.getParameter("todo");
 			output = actionAddToDo(todoDescr);
 			break;
-
+		default:
+			output=generateOutput();
 		}
 		sendResponse(response, output);
 	}
 
 	private synchronized String actionReset() {
 		todos.clear();
-		return generateOutput("");
+		return generateOutput();
 	}
 
 	private synchronized String actionAddToDo(String todoDescr) {
@@ -62,9 +61,9 @@ public class ToDoServlet extends HttpServlet {
 
 			// add todo list
 			todos.add(todo);
-			return generateOutput("");
+			return generateOutput();
 		} else {
-			return generateOutput(NOINPUT);
+			return generateOutput("Please, enter TODO!");
 		}
 	}
 
@@ -87,6 +86,9 @@ public class ToDoServlet extends HttpServlet {
 		return table.toString();
 	}
 
+	private String generateOutput() {
+		return generateOutput("");
+	}
 	private String generateOutput(String errorMessage) {
 		String site = "<!DOCTYPE html>"
 				+ "<html>"
@@ -112,7 +114,7 @@ public class ToDoServlet extends HttpServlet {
 				+ "</table>"
 				+ "<button type=\"submit\" name=\"button\" value=\"reset\">Reset</button>"
 				+ "</form>" + "</div>" + "<div id=\"footer\">"
-				+ "<p>(C) 2014 turngeek ltd., MIT Licence</p>" + "</div>"
+				+ "<p>(C) 2014 Schieﬂer/Schmollinger, MIT Licence</p>" + "</div>"
 				+ "</body>" + "</html>";
 
 		return site;
