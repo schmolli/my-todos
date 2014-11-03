@@ -114,7 +114,7 @@ public class ToDoServlet extends HttpServlet {
 				+ "</table>"
 				+ "<button type=\"submit\" name=\"button\" value=\"reset\">Reset</button>"
 				+ "</form>" + "</div>" + "<div id=\"footer\">"
-				+ "<p>(C) 2014 Schieﬂer/Schmollinger, MIT Licence</p>" + "</div>"
+				+ "<p>(C) 2014 Schie√üer/Schmollinger, MIT Licence</p>" + "</div>"
 				+ "</body>" + "</html>";
 
 		return site;
