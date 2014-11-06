@@ -1,61 +1,57 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
-<%@ page import="press.turngeek.todos.ToDo" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.LinkedList" %>
-<%@ page import="java.util.Date" %>
-<%! 
-	private static final String NOINPUT = "Please, enter TODO!";
-	private List<ToDo> todos=new LinkedList<>();
-	private synchronized void actionReset() {
-		todos.clear();		
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ page import="press.turngeek.todos.ToDo"%>
+<%@ page import="java.util.List"%>
+<%@ page import="java.util.LinkedList"%>
+<%@ page import="java.util.Date"%>
+<%!
+	private List<ToDo> todos = new LinkedList<>();//TODO move list in session context
+
+	private synchronized void actionReset(HttpServletRequest request) {
+		todos.clear();
+		request.setAttribute("errorMessage", "");
+		request.setAttribute("todos", new LinkedList<ToDo>());
 	}
-	private synchronized String actionAddToDo(String todoDescr) {
-	if (todoDescr != null && !todoDescr.isEmpty()) {
+
+	private synchronized void actionAddToDo(HttpServletRequest request) {
+		String todoDescr = request.getParameter("todo");
+		if (todoDescr != null && !todoDescr.isEmpty()) {
 			// create todo
 			ToDo todo = new ToDo();
 			todo.setDescription(todoDescr);
 			todo.setCreated(new Date());
 			// add todo list
 			todos.add(todo);
-			return "";
+			request.setAttribute("errorMessage", "");
+			request.setAttribute("todos", new LinkedList<ToDo>(todos));
 		} else {
-			//set error
-			return NOINPUT;
+			request.setAttribute("errorMessage", "Please, enter TODO!");
+			request.setAttribute("todos", new LinkedList<ToDo>(todos));
 		}
 	}
-	private String generateTable() {
-		StringBuilder table = new StringBuilder();
-		for (ToDo todo : todos) {
-			table.append("<tr><td>").append(todo.getDescription()).append("</td>");
-			table.append("<td>").append(todo.getCreated()).append("</td></tr>");
-		}
-		if (table.length() == 0)
-			table.append("<tr></tr>");
-		return table.toString();
+	
+	private synchronized void actionListToDos(HttpServletRequest request) {
+		request.setAttribute("errorMessage", "");
+		request.setAttribute("todos", new LinkedList<ToDo>(todos));
 	}
 %>
 
 <%
 	final String button = request.getParameter("button");
 	//if no button is pressed it is the initial GET to the page
-	if (button!=null) {
+	if (button != null) {
 		switch (button) {
 		case "reset":
-			actionReset();
-			request.setAttribute("errorMessage", "");
-			request.setAttribute("table","");
+			actionReset(request);
 			break;
 		case "save":
-		default:
-			String todoDescr = request.getParameter("todo");
-			String errorMessage=actionAddToDo(todoDescr);
-			request.setAttribute("errorMessage", errorMessage);
-			request.setAttribute("table",generateTable());
+			actionAddToDo(request);
 			break;
-		} 	
+		default:
+			actionListToDos(request);
+		}
 	} else {
-		request.setAttribute("errorMessage", "");
-		request.setAttribute("table",generateTable());
+		actionListToDos(request);
 	}
 %>
 <!DOCTYPE html>
@@ -77,16 +73,34 @@
 			<form method="POST" action="todos.jsp">
 				<input type="text" name="todo" size="30" placeholder="Enter TODO" />
 				<button type="submit" name="button" value="save">Save</button>
-				<span style="color:red"><%=request.getAttribute("errorMessage") %></span>
+				<%
+					String errorMessage = (String)request.getAttribute("errorMessage");
+					if (errorMessage.length()!=0)
+				%>
+					<span style="color: red"><%=errorMessage%></span>
 				<h1>My TODOs</h1>
 				<table>
-					<%=request.getAttribute("table")%> 
+					<%
+						for (ToDo todo : (List<ToDo>)request.getAttribute("todos")) {
+					%>
+						<tr><td>
+						<% 
+							out.println(todo.getDescription());
+						%>
+						</td><td>
+						<%
+							out.println(todo.getCreated());
+						%>
+						</td></tr>
+					<%
+					} 
+					%>
 				</table>
 				<button type="submit" name="button" value="reset">Reset</button>
 			</form>
 		</div>
 		<div id="footer">
-			<p>(C) 2014 turngeek ltd., MIT license</p>
+			<p>(C) 2014 Schießer/Schmollinger., MIT license</p>
 		</div>
 	</div>
 </body>
