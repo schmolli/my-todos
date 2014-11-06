@@ -45,7 +45,7 @@
 			</form>
 		</div>
 		<div id="footer">
-			<p>(C) 2014 turngeek ltd., MIT license</p>
+			<p>(C) 2014 Schießer/Schmollinger, MIT license</p>
 		</div>
 	</div>
 </body>
