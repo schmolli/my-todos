@@ -24,7 +24,7 @@ public class ToDoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// generate output
-		sendResponse(response, generateOutput());
+		sendResponse(response, actionListToDos());
 	}
 
 	protected void doPost(HttpServletRequest request,
@@ -65,6 +65,10 @@ public class ToDoServlet extends HttpServlet {
 		} else {
 			return generateOutput("Please, enter TODO!");
 		}
+	}
+	
+	private synchronized String actionListToDos() {
+		return generateOutput();
 	}
 
 	private void sendResponse(HttpServletResponse response, final String output)
