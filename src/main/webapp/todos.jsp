@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="press.turngeek.todos.ToDo"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.LinkedList"%>
@@ -54,6 +55,8 @@
 		actionListToDos(request);
 	}
 %>
+<jsp:useBean id="todos" class="java.util.LinkedList<ToDo>" scope="request"/>
+<jsp:useBean id="errorMessage" class="java.lang.String" scope="request"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -73,34 +76,27 @@
 			<form method="POST" action="todos.jsp">
 				<input type="text" name="todo" size="30" placeholder="Enter TODO" />
 				<button type="submit" name="button" value="save">Save</button>
-				<%
-					String errorMessage = (String)request.getAttribute("errorMessage");
-					if (errorMessage.length()!=0)
-				%>
-					<span style="color: red"><%=errorMessage%></span>
+				<c:if test="${errorMessage!=''}">
+					<span style="color: red">${errorMessage}</span>
+				</c:if>
 				<h1>My TODOs</h1>
 				<table>
-					<%
-						for (ToDo todo : (List<ToDo>)request.getAttribute("todos")) {
-					%>
-						<tr><td>
-						<% 
-							out.println(todo.getDescription());
-						%>
-						</td><td>
-						<%
-							out.println(todo.getCreated());
-						%>
-						</td></tr>
-					<%
-					} 
-					%>
+					<c:forEach items="${todos}" var="todo">
+						<tr>
+							<td>
+								${todo.description} 
+							</td>
+							<td>
+								${todo.created}
+							</td>
+						</tr>
+					</c:forEach>
 				</table>
 				<button type="submit" name="button" value="reset">Reset</button>
 			</form>
 		</div>
 		<div id="footer">
-			<p>(C) 2014 Schießer/Schmollinger., MIT license</p>
+			<p>(C) 2014 Schießer/Schmollinger, MIT license</p>
 		</div>
 	</div>
 </body>
