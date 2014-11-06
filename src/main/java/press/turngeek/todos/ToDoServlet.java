@@ -35,15 +35,17 @@ public class ToDoServlet extends HttpServlet {
 		switch (button) {
 		case "reset":
 			output = actionReset();
+			sendResponse(response, output);
 			break;
 		case "save":
 			String todoDescr = request.getParameter("todo");
 			output = actionAddToDo(todoDescr);
+			sendResponse(response, output);
 			break;
 		default:
-			output=generateOutput();
+			doGet(request, response);
 		}
-		sendResponse(response, output);
+		
 	}
 
 	private synchronized String actionReset() {
