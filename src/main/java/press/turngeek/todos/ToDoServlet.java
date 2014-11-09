@@ -10,21 +10,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-@WebServlet({ "/ToDoServlet", "/todos" })
+@WebServlet({ "/ToDoServlet", "/todos" }) 
 public class ToDoServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -7843898075264520941L;
-	private List<ToDo> todos;
-
-	public ToDoServlet() {
-		todos = new LinkedList<>();
-	}
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// generate output
-		sendResponse(response, actionListToDos());
+		sendResponse(response, actionListToDos(request));
 	}
 
 	protected void doPost(HttpServletRequest request,
@@ -34,12 +30,12 @@ public class ToDoServlet extends HttpServlet {
 		final String button = request.getParameter("button");
 		switch (button) {
 		case "reset":
-			output = actionReset();
+			output = actionReset(request);
 			sendResponse(response, output);
 			break;
 		case "save":
 			String todoDescr = request.getParameter("todo");
-			output = actionAddToDo(todoDescr);
+			output = actionAddToDo(request, todoDescr);
 			sendResponse(response, output);
 			break;
 		default:
@@ -48,14 +44,16 @@ public class ToDoServlet extends HttpServlet {
 		
 	}
 
-	private synchronized String actionReset() {
+	private synchronized String actionReset(HttpServletRequest request) {
+		List<ToDo> todos=getTodos(request);
 		todos.clear();
-		return generateOutput();
+		return generateOutput(request);
 	}
 
-	private synchronized String actionAddToDo(String todoDescr) {
+	private synchronized String actionAddToDo(HttpServletRequest request, String todoDescr) {
 
 		if (todoDescr != null && !todoDescr.isEmpty()) {
+			List<ToDo> todos=getTodos(request);
 			// create todo
 			ToDo todo = new ToDo();
 			todo.setDescription(todoDescr);
@@ -63,14 +61,14 @@ public class ToDoServlet extends HttpServlet {
 
 			// add todo list
 			todos.add(todo);
-			return generateOutput();
+			return generateOutput(request);
 		} else {
-			return generateOutput("Please, enter TODO!");
+			return generateOutput("Please, enter TODO!",request);
 		}
 	}
 	
-	private synchronized String actionListToDos() {
-		return generateOutput();
+	private synchronized String actionListToDos(HttpServletRequest request) {
+		return generateOutput(request);
 	}
 
 	private void sendResponse(HttpServletResponse response, final String output)
@@ -80,7 +78,18 @@ public class ToDoServlet extends HttpServlet {
 		response.getOutputStream().print(output);
 	}
 
-	private String generateTable() {
+	private List<ToDo> getTodos(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		List<ToDo> todos = (List<ToDo>)session.getAttribute("todos");
+		if (todos==null) {
+			todos=new LinkedList<ToDo>();
+			session.setAttribute("todos", todos); 
+		}
+		return todos;
+	}
+	
+	private String generateTable(HttpServletRequest request) {
+		List<ToDo> todos=getTodos(request);
 		StringBuilder table = new StringBuilder();
 		for (ToDo todo : todos) {
 			table.append("<tr><td>").append(todo.getDescription())
@@ -92,10 +101,12 @@ public class ToDoServlet extends HttpServlet {
 		return table.toString();
 	}
 
-	private String generateOutput() {
-		return generateOutput("");
+	private String generateOutput(HttpServletRequest request) {
+		return generateOutput("", request);
 	}
-	private String generateOutput(String errorMessage) {
+	//TODO StrinBuilder?
+	//TODO Read from File?
+	private String generateOutput(String errorMessage, HttpServletRequest request) {
 		String site = "<!DOCTYPE html>"
 				+ "<html>"
 				+ "<head>"
@@ -112,11 +123,13 @@ public class ToDoServlet extends HttpServlet {
 				+ "<h1>Enter TODO</h1>"
 				+ "<form  method=\"POST\" action=\"\">"
 				+ "<input type=\"text\" name=\"todo\" class=\"form-control\" size=\"50\" placeholder=\"Enter todo\" />"
-				+ "<button type=\"submit\" name=\"button\" value=\"save\">Save</button>"
-				+ "<span style=\"color:red\">" + errorMessage +"</span>"
-				+ "<h1>My TODOs</h1>"
+				+ "<button type=\"submit\" name=\"button\" value=\"save\">Save</button>";
+			if (!errorMessage.isEmpty())
+				site += "<span style=\"color:red\">" + errorMessage +"</span>";
+			site+=
+				"<h1>My TODOs</h1>"
 				+ "<table>"
-				+ generateTable()
+				+ generateTable(request)
 				+ "</table>"
 				+ "<button type=\"submit\" name=\"button\" value=\"reset\">Reset</button>"
 				+ "</form>" + "</div>" + "<div id=\"footer\">"
