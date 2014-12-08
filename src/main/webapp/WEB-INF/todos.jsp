@@ -3,8 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="press.turngeek.todos.ToDo"%>
 
-<jsp:useBean id="todos" class="java.util.LinkedList<ToDo>" scope="request"/>
-<jsp:useBean id="errorMessage" class="java.lang.String" scope="request"/>
+<jsp:useBean id="press.turngeek.todos.todos" class="java.util.LinkedList<ToDo>" scope="session"/>
+<jsp:useBean id="press.turngeek.todos.err" class="java.lang.String" scope="request"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,18 +24,18 @@
 			<form method="POST" action="todos">
 				<input type="text" name="todo" size="30" placeholder="Enter TODO" />
 				<button type="submit" name="button" value="save">Save</button>
-				<c:if test="${errorMessage!=''}">
-					<span style="color: red">${errorMessage}</span>
+				<c:if test="${!empty errorMessage}">
+					<span style="color: red"><%=errorMessage%></span>
 				</c:if>
 				<h1>My TODOs</h1>
 				<table>
 					<c:forEach items="${todos}" var="todo">
 						<tr>
 							<td>
-								${todo.description} 
+								<%=todo.description%>
 							</td>
 							<td>
-								${todo.created}
+								<%=todo.created%>
 							</td>
 						</tr>
 					</c:forEach>

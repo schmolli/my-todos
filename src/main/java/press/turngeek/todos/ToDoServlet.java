@@ -11,73 +11,78 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-/**
- * Servlet implementation class ToDoServlet
- */
-@WebServlet({ "/ToDoServlet", "/todos" })
+@WebServlet({ "/ToDoServlet", "/todos" }) 
 public class ToDoServlet extends HttpServlet {
-	
-	private static final long serialVersionUID = -1217343668262675847L;
-	private ServletConfig config; 
-	private List<ToDo> todos = new LinkedList<>();//TODO move list in session context
 
+	private static final long serialVersionUID = -7843898075264520941L;
+	private ServletConfig config;
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		this.config=config;
 	}
 
-	private synchronized void actionReset(HttpServletRequest request) {
-		todos.clear();
-		request.setAttribute("errorMessage", "");
-		request.setAttribute("todos", new LinkedList<ToDo>());
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// no action
+		sendResponse(request, response);
 	}
 
-	private synchronized void actionAddToDo(HttpServletRequest request) {
-		String todoDescr = request.getParameter("todo");
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// get post parameter
+		final String button = request.getParameter("button");
+		switch (button) {
+		case "reset":
+			actionReset(request);
+			sendResponse(request, response);
+			break;
+		case "save":
+			String todoDescr = request.getParameter("todo");
+			actionAddToDo(request, todoDescr);
+			sendResponse(request, response);
+			break;
+		default:
+			// no action
+			sendResponse(request, response);
+		}	
+	}
+
+	private synchronized void actionReset(HttpServletRequest request) {
+		List<ToDo> todos=getTodos(request);
+		todos.clear();
+	}
+
+	private synchronized void actionAddToDo(HttpServletRequest request, String todoDescr) {
+
 		if (todoDescr != null && !todoDescr.isEmpty()) {
+			List<ToDo> todos=getTodos(request);
 			// create todo
 			ToDo todo = new ToDo();
 			todo.setDescription(todoDescr);
 			todo.setCreated(new Date());
 			// add todo list
 			todos.add(todo);
-			request.setAttribute("errorMessage", "");
-			request.setAttribute("todos", new LinkedList<ToDo>(todos));
 		} else {
-			request.setAttribute("errorMessage", "Please, enter TODO!");
-			request.setAttribute("todos", new LinkedList<ToDo>(todos));
+			//set error message in request
+			request.setAttribute("press.turngeek.todos.err", "Please, enter TODO!");
 		}
 	}
-	
-	private synchronized void actionListToDos(HttpServletRequest request) {
-		request.setAttribute("errorMessage", "");
-		request.setAttribute("todos", new LinkedList<ToDo>(todos));
-	}
-	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		actionListToDos(request);
+
+	private void sendResponse(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 		config.getServletContext().getRequestDispatcher("/WEB-INF/todos.jsp").forward(request, response);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		final String button = request.getParameter("button");
-		//if no button is pressed it is the initial GET to the page
-		if (button != null) {
-			switch (button) {
-			case "reset":
-				actionReset(request);
-				break;
-			case "save":
-				actionAddToDo(request);
-				break;
-			default:
-				actionListToDos(request);
-			}
-		} else {
-			actionListToDos(request);
+	private List<ToDo> getTodos(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		List<ToDo> todos = (List<ToDo>)session.getAttribute("press.turngeek.todos.todos");
+		if (todos==null) {
+			todos=new LinkedList<ToDo>();
+			session.setAttribute("press.turngeek.todos.todos", todos); 
 		}
-		config.getServletContext().getRequestDispatcher("/WEB-INF/todos.jsp").forward(request, response);
+		return todos;
 	}
-
 }
