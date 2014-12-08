@@ -67,7 +67,7 @@ public class ToDoServlet extends HttpServlet {
 			todos.add(todo);
 		} else {
 			//set error message in request
-			request.setAttribute("press.turngeek.todos.err", "Please, enter TODO!");
+			request.setAttribute("err", "Please, enter TODO!");
 		}
 	}
 
@@ -76,12 +76,13 @@ public class ToDoServlet extends HttpServlet {
 		config.getServletContext().getRequestDispatcher("/WEB-INF/todos.jsp").forward(request, response);
 	}
 
+	//TODO Keys for attributes should use press.turngeek.todos
 	private List<ToDo> getTodos(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		List<ToDo> todos = (List<ToDo>)session.getAttribute("press.turngeek.todos.todos");
+		List<ToDo> todos = (List<ToDo>)session.getAttribute("todos");
 		if (todos==null) {
 			todos=new LinkedList<ToDo>();
-			session.setAttribute("press.turngeek.todos.todos", todos); 
+			session.setAttribute("todos", todos); 
 		}
 		return todos;
 	}
