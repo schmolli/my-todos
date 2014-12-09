@@ -4,12 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import javax.faces.bean.SessionScoped;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
-
-@Named
-@ViewScoped
+@SessionScoped
 public class ToDoController implements Serializable {
 	
 	private static final long serialVersionUID = 8994022512914167890L;
@@ -17,7 +14,6 @@ public class ToDoController implements Serializable {
 	private List<ToDo> todos;
 		
 	public ToDoController() {
-		System.out.println("Construct");
 		todos=new Vector<>();
 		todo=new ToDo();
 	}
@@ -31,8 +27,6 @@ public class ToDoController implements Serializable {
 	}
 	
 	public String  doSave() {
-		System.out.println("doSave:");
-		System.out.println("todos ->" + todos);
 		ToDo newTodo = new ToDo();
 		newTodo.setDescription(todo.getDescription());
 		newTodo.setCreated(new Date());
