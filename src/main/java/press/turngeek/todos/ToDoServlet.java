@@ -32,6 +32,7 @@ public class ToDoServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		// get post parameter
 		final String button = request.getParameter("button");
 		switch (button) {
