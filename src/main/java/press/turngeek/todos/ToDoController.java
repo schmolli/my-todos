@@ -1,15 +1,16 @@
 package press.turngeek.todos;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import javax.faces.bean.SessionScoped;
 
-@SessionScoped
-public class ToDoController implements Serializable {
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ViewScoped
+@ManagedBean(name="toDoController")
+public class ToDoController  {
 	
-	private static final long serialVersionUID = 8994022512914167890L;
 	private ToDo todo;
 	private List<ToDo> todos;
 		
