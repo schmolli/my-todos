@@ -1,4 +1,4 @@
-package press.turngeek.todos;
+package press.turngeek.todos.controller;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,6 +7,8 @@ import java.util.Vector;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+
+import press.turngeek.todos.model.ToDo;
 
 @Named
 @ViewScoped
