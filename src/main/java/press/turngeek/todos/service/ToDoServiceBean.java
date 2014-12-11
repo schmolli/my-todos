@@ -28,7 +28,7 @@ public class ToDoServiceBean implements ToDoService {
 	}
 
 	@Override
-	public void reset() {
+	public void resetToDos() {
 		todos.clear();
 	}
 }

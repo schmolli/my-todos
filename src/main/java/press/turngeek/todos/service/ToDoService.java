@@ -8,6 +8,6 @@ public interface ToDoService {
 	
 	public List<ToDo> getAllToDos();
 	public void addToDo(ToDo todo);
-	public void reset();
+	public void resetToDos();
 
 }

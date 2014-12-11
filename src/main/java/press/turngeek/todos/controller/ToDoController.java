@@ -44,7 +44,7 @@ public class ToDoController implements Serializable {
 	}
 	
 	public String doReset() {		
-		toDoService.reset();
+		toDoService.resetToDos();
 		return "todos";
 	}
 	
