@@ -1,4 +1,4 @@
-package press.turngeek.todos;
+package press.turngeek.todos.controller;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
+
+import press.turngeek.todos.model.ToDo;
+import press.turngeek.todos.service.ToDoService;
 
 @Named
 @ViewScoped
@@ -14,10 +18,11 @@ public class ToDoController implements Serializable {
 	
 	private static final long serialVersionUID = 8994022512914167890L;
 	private ToDo todo;
-	private List<ToDo> todos;
+	
+	@Inject
+	private ToDoService toDoService;
 		
 	public ToDoController() {
-		todos=new Vector<>();
 		todo=new ToDo();
 	}
 
@@ -33,18 +38,18 @@ public class ToDoController implements Serializable {
 		ToDo newTodo = new ToDo();
 		newTodo.setDescription(todo.getDescription());
 		newTodo.setCreated(new Date());
-		todos.add(newTodo);
+		toDoService.addToDo(newTodo);
 		todo.setDescription("");
 		return "todos";
 	}
 	
 	public String doReset() {		
-		todos.clear();
+		toDoService.reset();
 		return "todos";
 	}
 	
 	public List<ToDo> getTodos() {
-		return todos;
+		return toDoService.getAllToDos();
 	}
 
 }
