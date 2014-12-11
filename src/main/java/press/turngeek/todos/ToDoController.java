@@ -17,7 +17,6 @@ public class ToDoController implements Serializable {
 	private List<ToDo> todos;
 		
 	public ToDoController() {
-		System.out.println("Construct");
 		todos=new Vector<>();
 		todo=new ToDo();
 	}
@@ -31,8 +30,6 @@ public class ToDoController implements Serializable {
 	}
 	
 	public String  doSave() {
-		System.out.println("doSave:");
-		System.out.println("todos ->" + todos);
 		ToDo newTodo = new ToDo();
 		newTodo.setDescription(todo.getDescription());
 		newTodo.setCreated(new Date());
