@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import press.turngeek.todos.model.ToDo;
+
 @WebServlet({ "/ToDoServlet", "/todos" }) 
 public class ToDoServlet extends HttpServlet {
 
