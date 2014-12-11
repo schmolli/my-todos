@@ -1,4 +1,4 @@
-package press.turngeek.todos;
+package press.turngeek.todos.model;
 
 import java.util.Date;
 
