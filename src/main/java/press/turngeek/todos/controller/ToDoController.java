@@ -11,7 +11,7 @@ import javax.faces.bean.ViewScoped;
 import press.turngeek.todos.model.ToDo;
 import press.turngeek.todos.service.ToDoService;
 
-@ManagedBean
+@ManagedBean(name="toDoController")
 @ViewScoped
 public class ToDoController implements Serializable {
 	
