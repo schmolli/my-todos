@@ -1,34 +1,36 @@
 package press.turngeek.todos.service;
 
 import java.util.List;
-import java.util.Vector;
 
-import javax.ejb.Stateful;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
 
+import press.turngeek.todos.data.ToDoManager;
 import press.turngeek.todos.model.ToDo;
 
-@Stateful
+@RequestScoped
+@Transactional(value=Transactional.TxType.REQUIRED)
 public class ToDoServiceBean implements ToDoService {
-	
-	private List<ToDo> todos;
-	
-	public ToDoServiceBean() {
-		super();
-		todos=new Vector<ToDo>();
-	}
+
+	@Inject
+	ToDoManager manager;
 
 	@Override
 	public List<ToDo> getAllToDos() {
+		List<ToDo> todos = manager.findAllToDos();
 		return todos;
 	}
 
 	@Override
 	public void addToDo(ToDo todo) {
+		List<ToDo> todos = manager.findAllToDos();
 		todos.add(todo);
 	}
 
 	@Override
 	public void resetToDos() {
+		List<ToDo> todos = manager.findAllToDos();
 		todos.clear();
 	}
 }
