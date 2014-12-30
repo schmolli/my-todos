@@ -3,23 +3,22 @@ package press.turngeek.todos.controller;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 import press.turngeek.todos.model.ToDo;
 import press.turngeek.todos.service.ToDoService;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class ToDoController implements Serializable {
 	
 	private static final long serialVersionUID = 8994022512914167890L;
 	private ToDo todo;
 	
-	@Inject
+	@EJB
 	private ToDoService toDoService;
 		
 	public ToDoController() {
