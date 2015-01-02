@@ -3,12 +3,12 @@ package press.turngeek.todos.data;
 import java.util.List;
 import java.util.Vector;
 
-import javax.ejb.Stateful;
+import javax.ejb.Singleton;
 
 import press.turngeek.todos.model.ToDo;
 
 
-@Stateful
+@Singleton
 public class ToDoManager {
 	
 	private List<ToDo> todos;
